@@ -1,32 +1,39 @@
 ﻿using CalculateANumber;
 using System.Diagnostics;
 
-// Step one (DFS)
-List<int> numbers = [6, 10, 25, 75, 5, 50];
-int target = 728;
-var stepOne = new StepOne();
-var tree = stepOne.GenerateTree(numbers, target);
-var stopwatch = Stopwatch.StartNew();
-stepOne.RunSearchAlgorithm(tree.Root, target);
-stopwatch.Stop();
-Console.WriteLine("Time taken: " + stopwatch.ElapsedMilliseconds + " ms");
+List<int> numbersStatic = [6, 10, 25, 75, 5, 50];
+int targetStatic = 728;
 
-// Step two (DFS)
-var stepTwo = new StepTwo();
-List<int> numbers1 = stepTwo.GenerateNumbers(6, 100);
-int target1 = stepTwo.GenerateTarget(numbers1);
-var tree1 = stepTwo.GenerateTree(numbers1, target1);
-var stopwatch1 = Stopwatch.StartNew();
-stepTwo.RunSearchAlgorithm(tree1.Root, target1);
-stopwatch1.Stop();
-Console.WriteLine("Time taken: " + stopwatch1.ElapsedMilliseconds + " ms");
+// Step one (DFS - Right) - Static
+SetupAndRun(new StepOne(), numbersStatic, targetStatic);
 
-// Step three (Greedy)
-var stepThree = new StepThree();
-List<int> numbers2 = stepThree.GenerateNumbers(6, 100);
-int target2 = stepThree.GenerateTarget(numbers2);
-var tree2 = stepThree.GenerateTree(numbers2, target2);
-var stopwatch2 = Stopwatch.StartNew();
-stepThree.RunSearchAlgorithm(tree2.Root, target2);
-stopwatch2.Stop();
-Console.WriteLine("Time taken: " + stopwatch2.ElapsedMilliseconds + " ms");
+// Step two (DFS - Left) - Static
+SetupAndRun(new StepTwo(), numbersStatic, targetStatic);
+
+// Step three (Greedy) - Static
+SetupAndRun(new StepThree(), numbersStatic, targetStatic);
+
+Console.WriteLine("-------------------------------------");
+
+List<int> numbersDynamic = BaseStep.GenerateNumbers(6, 100);
+int targetDynamic = BaseStep.GenerateTarget(numbersDynamic);
+
+// Step one (DFS - Right) - Dynamic
+SetupAndRun(new StepOne(), numbersDynamic, targetDynamic);
+
+// Step two (DFS - Left) - Dynamic
+SetupAndRun(new StepTwo(), numbersDynamic, targetDynamic);
+
+// Step three (Greedy) - Dynamic
+SetupAndRun(new StepThree(), numbersDynamic, targetDynamic);
+
+
+
+static void SetupAndRun(BaseStep step, List<int> numbers, int target)
+{
+    var tree = step.GenerateTree(numbers);
+    var stopwatch = Stopwatch.StartNew();
+    step.RunSearchAlgorithm(tree.Root, target);
+    stopwatch.Stop();
+    Console.WriteLine($"({step.GetType()}) Time taken: {stopwatch.ElapsedMilliseconds} ms");
+}

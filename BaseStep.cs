@@ -7,115 +7,161 @@ namespace CalculateANumber
 {
     public abstract class BaseStep
     {
-        public List<int> GenerateNumbers(int amount, int maxMultipleOfTwentyFive)
+        /// <summary>
+        /// Generate specific amount of random numbers
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="maxMultipleOfTwentyFive"></param>
+        /// <returns>List<int></returns>
+        public static List<int> GenerateNumbers(int amount, int maxMultipleOfTwentyFive)
         {
-            var rnd = new Random();
+            Random rnd = new();
             List<int> numbers = new();
 
+            // Generate numbers until we have enough numbers
             while (numbers.Count < amount)
             {
                 var type = rnd.Next(2);
-                int drawn = 0;
+                // Check which type number we want to generate and add to list
                 if (type == (int)NumberOptions.ZeroToNine)
                 {
-                    drawn = rnd.Next(1, 11);
+                    numbers.Add(rnd.Next(1, 11));
                 }
                 else if (type == (int)NumberOptions.MultipleOfTwentyFive)
                 {
                     int[] multipleOfTwentyFive = Enumerable.Range(25, maxMultipleOfTwentyFive).Where(n => n % 25 == 0).ToArray();
-                    drawn = multipleOfTwentyFive[rnd.Next(multipleOfTwentyFive.Length)];
-                }
-
-                if (!numbers.Contains(drawn))
-                {
-                    numbers.Add(drawn);
+                    numbers.Add(multipleOfTwentyFive[rnd.Next(multipleOfTwentyFive.Length)]);
                 }
             }
 
-            return numbers.ToList();
+            return numbers;
         }
 
-        public int GenerateTarget(List<int> numbers)
+        /// <summary>
+        /// Generate target based on given numbers and return int version of it
+        /// </summary>
+        /// <param name="numbers"></param>
+        /// <returns>int</returns>
+        public static int GenerateTarget(List<int> numbers) => Convert.ToInt32(RunExpression(BuildExpression(numbers)));
+
+        /// <summary>
+        /// Generate tree based on given numbers where a search algorithm can be runned on
+        /// </summary>
+        /// <param name="numbers"></param>
+        /// <param name="target"></param>
+        /// <returns>Tree</returns>
+        public Tree GenerateTree(List<int> numbers)
         {
-            return Convert.ToInt32(RunExpression(BuildExpression(numbers)));
-        }
+            Queue<Node> queue = new();
+            Node root = new(0, numbers);
+            Tree tree = new(root);
 
-        public Tree GenerateTree(List<int> numbers, int target)
-        {
-            char[] operators = { '+', '-', '/', '*' };
-            var queue = new Queue<Node>();
-            var startNode = new Node(0, numbers);
-            var tree = new Tree(startNode);
+            // Add first layer of childrens to tree
+            AddValueNodeAsChildAndQueue(queue, tree.Root);
 
-            foreach (var number in numbers)
-            {
-                // Needs to be unique
-                var numbersLeft = numbers.Where(x => x != number).ToList();
-                var newNode = new Node(number, numbersLeft);
-                queue.Enqueue(newNode);
-                tree.Root.AddChild(newNode);
-            }
-
+            // Build tree until queue is empty
             while (queue.Count > 0)
             {
+                // Get node from queue
                 var existingNode = queue.Dequeue();
 
+                // Check if node is a number or operator and call specific method
                 if (existingNode.Operator == null)
                 {
-                    if (existingNode.ValuesLeft.Count > 0)
-                    {
-                        foreach (var op in operators)
-                        {
-                            var newNode = new Node(op, existingNode.ValuesLeft);
-                            existingNode.AddChild(newNode);
-                            queue.Enqueue(newNode);
-                        }
-                    }
+                    // It's a number node, so our next node needs to be an operator
+                    AddOperatorNodeAsChildAndQueue(queue, existingNode);
                 }
                 else
                 {
-                    foreach (var number in existingNode.ValuesLeft!)
-                    {
-                        var numbersLeft = existingNode.ValuesLeft.Where(x => x != number).ToList();
-                        var newNode = new Node(number, numbersLeft);
-                        existingNode.AddChild(newNode);
-                        queue.Enqueue(newNode);
-                    }
+                    // It's a operator node, so our next node needs to be a number
+                    AddValueNodeAsChildAndQueue(queue, existingNode);
                 }
             }
 
             return tree;
         }
 
-        public abstract bool RunSearchAlgorithm(Node node, int target, string expression = "");
-
-        private string BuildExpression(List<int> numbers)
+        /// <summary>
+        /// Add value node as child of existingNode and add newNode to queue
+        /// </summary>
+        /// <param name="queue"></param>
+        /// <param name="existingNode"></param>
+        private void AddValueNodeAsChildAndQueue(Queue<Node> queue, Node existingNode)
         {
-            var rnd = new Random();
-            var shuffledNumbers = numbers.OrderBy(n => rnd.Next()).ToArray();
-            char[] expressions = { '+', '-', '/', '*' };
+            // Loop through all valuesLeft on existingNode, add as child and enqueue new node
+            foreach (int number in existingNode.ValuesLeft!)
+            {
+                // Calculate remaining numbers in this leaf
+                List<int> numbersLeft = [.. existingNode.ValuesLeft];
+                numbersLeft.Remove(number);
 
-            var expression = new StringBuilder();
+                Node newNode = new(number, numbersLeft);
+                existingNode.AddChild(newNode);
+                queue.Enqueue(newNode);
+            }
+        }
 
-            for (int i = 0; i < shuffledNumbers.Length - 1; i += 2)
+        /// <summary>
+        /// Add operator node as child of existingNode and add newNode to queue
+        /// </summary>
+        /// <param name="queue"></param>
+        /// <param name="existingNode"></param>
+        private void AddOperatorNodeAsChildAndQueue(Queue<Node> queue, Node existingNode)
+        {
+            // Don't put an operator as last child
+            if (existingNode.ValuesLeft.Count > 0)
+            {
+                // Loop through all operators, add as child and enqueue new node
+                foreach (char op in new char[] { '+', '-', '/', '*' })
+                {
+                    Node newNode = new(op, existingNode.ValuesLeft);
+                    existingNode.AddChild(newNode);
+                    queue.Enqueue(newNode);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Build expression based on given numbers to ensure a foundable target
+        /// </summary>
+        /// <param name="numbers"></param>
+        /// <returns>string</returns>
+        private static string BuildExpression(List<int> numbers)
+        {
+            Random rnd = new();
+
+            // Shuffle given numbers to make a more dynamic expression
+            int[] shuffledNumbers = [.. numbers.OrderBy(n => rnd.Next())];
+            char[] operators = ['+', '-', '/', '*'];
+
+            StringBuilder expression = new();
+
+            // Loop through shuffledNumbers and append to expression
+            for (int i = 0; i < shuffledNumbers.Length; i++)
             {
                 expression.Append(shuffledNumbers[i]);
-                expression.Append(expressions[rnd.Next(expressions.Length)]);
-                expression.Append(shuffledNumbers[i + 1]);
 
-                if (i != (shuffledNumbers.Length - 2))
-                {
-                    expression.Append(expressions[rnd.Next(expressions.Length)]);
-                }
+                // Don't append operator at the end of the expression 
+                if (i != (shuffledNumbers.Length - 1)) expression.Append(operators[rnd.Next(operators.Length)]);
             }
 
             return expression.ToString();
         }
 
-        protected int RunExpression(string expression)
-        {
-            var result = new DataTable().Compute(expression, null);
-            return Convert.ToInt32(result);
-        }
+        /// <summary>
+        /// Run expression string ang convert result to int
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns>int</returns>
+        protected static int RunExpression(string expression) => Convert.ToInt32(new DataTable().Compute(expression, null));
+
+        /// <summary>
+        /// Run specific search algorithm that needs to be implemented by subclasses
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="target"></param>
+        /// <param name="expression"></param>
+        /// <returns>bool</returns>
+        public abstract bool RunSearchAlgorithm(Node node, int target, string expression = "");
     }
 }
