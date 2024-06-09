@@ -48,7 +48,6 @@ namespace CalculateANumber
         /// Generate tree based on given numbers where a search algorithm can be runned on
         /// </summary>
         /// <param name="numbers"></param>
-        /// <param name="target"></param>
         /// <returns>Tree</returns>
         public Tree GenerateTree(List<int> numbers)
         {
