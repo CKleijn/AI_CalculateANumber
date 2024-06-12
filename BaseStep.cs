@@ -1,6 +1,7 @@
 ﻿using CalculateANumber.Enums;
 using CalculateANumber.Structures;
 using System.Data;
+using System.Linq.Expressions;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -43,6 +44,7 @@ namespace CalculateANumber
         /// </summary>
         /// <param name="numbers"></param>
         /// <returns>long</returns>
+
         public static long GenerateTarget(List<int> numbers)
         {
             long target = Convert.ToInt64(RunExpression(BuildExpression(numbers)));
@@ -135,21 +137,55 @@ namespace CalculateANumber
             Random rnd = new();
 
             // Shuffle given numbers to make a more dynamic expression
-            int[] shuffledNumbers = [.. numbers.OrderBy(n => rnd.Next())];
-            char[] operators = ['+', '-', '/', '*'];
+            int[] shuffledNumbers = numbers.OrderBy(n => rnd.Next()).ToArray();
+            char[] operators = { '+', '-', '*', '/' };
 
             StringBuilder expression = new();
+            expression.Append(shuffledNumbers[0]);
 
             // Loop through shuffledNumbers and append to expression
-            for (int i = 0; i < shuffledNumbers.Length; i++)
+            for (int i = 1; i < shuffledNumbers.Length; i++)
             {
-                expression.Append(shuffledNumbers[i]);
+                bool valid = false;
 
-                // Don't append operator at the end of the expression 
-                if (i != (shuffledNumbers.Length - 1)) expression.Append(operators[rnd.Next(operators.Length)]);
+                while (!valid)
+                {
+                    StringBuilder calculation = new StringBuilder();
+                    calculation.Append(expression.ToString());
+
+                    char op = operators[rnd.Next(operators.Length)];
+                    int nextNumber = shuffledNumbers[i];
+
+                    // Check for division by zero
+                    if (op == '/' && nextNumber == 0)
+                    {
+                        continue;
+                    }
+
+                    calculation.Append(op).Append(nextNumber);
+
+                    // Check if the calculation has no decimal result
+                    if (IsValidCalculation(calculation.ToString()))
+                    {
+                        expression.Append(op).Append(nextNumber);
+                        valid = true;
+                    }
+                }
             }
 
             return expression.ToString();
+        }
+
+        /// <summary>
+        /// Check if the calculation has no decimal result
+        /// </summary>
+        /// <param name="calculation"></param>
+        /// <returns>bool</returns>
+        protected static bool IsValidCalculation(string calculation)
+        {
+            DataTable dt = new DataTable();
+            double result = Convert.ToDouble(dt.Compute(calculation, null));
+            return Math.Abs(result % 1) < double.Epsilon * 100; // Check if result is close to an integer
         }
 
         /// <summary>
