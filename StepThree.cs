@@ -12,10 +12,13 @@ namespace CalculateANumber
         /// <param name="target"></param>
         /// <param name="expression"></param>
         /// <returns>bool</returns>
-        public override bool RunSearchAlgorithm(Node node, int target, string expression = "")
+        public override bool RunSearchAlgorithm(Node node, long target, ref int nodesVisited, string expression = "")
         {
             // Check if node exists
             if (node == null) return false;
+
+            // Increase nodesVisited
+            nodesVisited++;
 
             // Check if GS reached bottom of leaf
             if (node.Children.Count == 0)
@@ -24,7 +27,8 @@ namespace CalculateANumber
                 if (target == RunExpression(expression))
                 {
                     // Target found with GS, print expression solution
-                    Console.WriteLine(expression);
+                    Console.WriteLine($"Expression: {expression}={target}");
+                    Console.WriteLine($"Nodes visited: {nodesVisited}");
                     return true;
                 }
             }
@@ -37,20 +41,20 @@ namespace CalculateANumber
                 if (child.Operator == null)
                 {
                     string futureExpression = expression + child.Value.ToString();
-                    int result = RunExpression(futureExpression);
+                    long result = RunExpression(futureExpression);
                     return target - result;
                 }
                 else
                 // Run future expression with child operator and sort based on difference between target and result
                 {
-                    int currentResult = RunExpression(expression);
-                    int difference = target - currentResult;
+                    long currentResult = RunExpression(expression);
+                    long difference = target - currentResult;
                     int range = 100;
 
                     // Sort optimal operators based on given conditions
                     return difference switch
                     {
-                        int diff when (diff > 0 && diff < range) => child.Operator switch
+                        long diff when (diff > 0 && diff < range) => child.Operator switch
                         {
                             '+' => 1,
                             '*' => 2,
@@ -58,7 +62,7 @@ namespace CalculateANumber
                             '/' => 4,
                             _ => 0
                         },
-                        int diff when (diff >= range) => child.Operator switch
+                        long diff when (diff >= range) => child.Operator switch
                         {
                             '*' => 1,
                             '+' => 2,
@@ -66,7 +70,7 @@ namespace CalculateANumber
                             '/' => 4,
                             _ => 0
                         },
-                        int diff when (diff < 0 && diff > -range) => child.Operator switch
+                        long diff when (diff < 0 && diff > -range) => child.Operator switch
                         {
                             '-' => 1,
                             '/' => 2,
@@ -93,7 +97,7 @@ namespace CalculateANumber
                 string newExpression = expression + (child.Operator != null ? child.Operator.ToString() : child.Value.ToString());
                 // Call this recursive function to check if solution has found, otherwise go to next child of this child node
                 // If solution has found > use stop condition
-                if (RunSearchAlgorithm(child, target, newExpression)) return true;
+                if (RunSearchAlgorithm(child, target, ref nodesVisited, newExpression)) return true;
             }
 
             // Target not found with GS

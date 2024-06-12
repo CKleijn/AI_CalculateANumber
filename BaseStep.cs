@@ -38,11 +38,11 @@ namespace CalculateANumber
         }
 
         /// <summary>
-        /// Generate target based on given numbers and return int version of it
+        /// Generate target based on given numbers and return long version of it
         /// </summary>
         /// <param name="numbers"></param>
-        /// <returns>int</returns>
-        public static int GenerateTarget(List<int> numbers) => Convert.ToInt32(RunExpression(BuildExpression(numbers)));
+        /// <returns>long</returns>
+        public static long GenerateTarget(List<int> numbers) => Convert.ToInt64(RunExpression(BuildExpression(numbers)));
 
         /// <summary>
         /// Generate tree based on given numbers where a search algorithm can be runned on
@@ -148,11 +148,11 @@ namespace CalculateANumber
         }
 
         /// <summary>
-        /// Run expression string ang convert result to int
+        /// Run expression string ang convert result to long
         /// </summary>
         /// <param name="expression"></param>
-        /// <returns>int</returns>
-        protected static int RunExpression(string expression) => Convert.ToInt32(new DataTable().Compute(expression, null));
+        /// <returns>long</returns>
+        protected static long RunExpression(string expression) => Convert.ToInt64(new DataTable().Compute(expression, null));
 
         /// <summary>
         /// Run specific search algorithm that needs to be implemented by subclasses
@@ -161,6 +161,6 @@ namespace CalculateANumber
         /// <param name="target"></param>
         /// <param name="expression"></param>
         /// <returns>bool</returns>
-        public abstract bool RunSearchAlgorithm(Node node, int target, string expression = "");
+        public abstract bool RunSearchAlgorithm(Node node, long target, ref int nodesVisited, string expression = "");
     }
 }

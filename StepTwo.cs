@@ -11,10 +11,13 @@ namespace CalculateANumber
         /// <param name="target"></param>
         /// <param name="expression"></param>
         /// <returns>bool</returns>
-        public override bool RunSearchAlgorithm(Node node, int target, string expression = "")
+        public override bool RunSearchAlgorithm(Node node, long target, ref int nodesVisited, string expression = "")
         {
             // Check if node exists
             if (node == null) return false;
+
+            // Increase nodesVisited
+            nodesVisited++;
 
             // Check if DFS reached bottom of leaf
             if (node.Children.Count == 0)
@@ -23,7 +26,8 @@ namespace CalculateANumber
                 if (target == RunExpression(expression))
                 {
                     // Target found with DFS, print expression solution
-                    Console.WriteLine(expression);
+                    Console.WriteLine($"Expression: {expression}={target}");
+                    Console.WriteLine($"Nodes visited: {nodesVisited}");
                     return true;
                 }
             }
@@ -35,7 +39,7 @@ namespace CalculateANumber
                 string newExpression = expression + (child.Operator != null ? child.Operator.ToString() : child.Value.ToString());
                 // Call this recursive function to check if solution has found, otherwise go to next child of this child node
                 // If solution has found > use stop condition
-                if (RunSearchAlgorithm(child, target, newExpression)) return true;
+                if (RunSearchAlgorithm(child, target, ref nodesVisited, newExpression)) return true;
             }
 
             // Target not found with DFS
