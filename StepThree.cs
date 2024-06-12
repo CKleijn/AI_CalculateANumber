@@ -57,42 +57,42 @@ namespace CalculateANumber
                     {
                         long diff when (diff > 0 && diff < range) => child.Operator switch
                         {
-                            '+' => 1,
-                            '*' => 2,
-                            '-' => 3,
-                            '/' => 4,
-                            _ => 0
+                            '+' => 1L,
+                            '*' => 2L,
+                            '-' => 3L,
+                            '/' => 4L,
+                            _ => 0L
                         },
                         long diff when (diff >= range) => child.Operator switch
                         {
-                            '*' => 1,
-                            '+' => 2,
-                            '-' => 3,
-                            '/' => 4,
-                            _ => 0
+                            '*' => 1L,
+                            '+' => 2L,
+                            '-' => 3L,
+                            '/' => 4L,
+                            _ => 0L
                         },
                         long diff when (diff < 0 && diff > -range) => child.Operator switch
                         {
-                            '-' => 1,
-                            '/' => 2,
-                            '+' => 3,
-                            '*' => 4,
-                            _ => 0
+                            '-' => 1L,
+                            '/' => 2L,
+                            '+' => 3L,
+                            '*' => 4L,
+                            _ => 0L
                         },
                         _ => child.Operator switch
                         {
-                            '/' => 1,
-                            '-' => 2,
-                            '+' => 3,
-                            '*' => 4,
-                            _ => 0
+                            '/' => 1L,
+                            '-' => 2L,
+                            '+' => 3L,
+                            '*' => 4L,
+                            _ => 0L
                         }
                     };
                 }
             });
 
             // Start GS
-            foreach (Node child in node.Children)
+            foreach (Node child in sortedChildren)
             {
                 // Create new expression with child value or operator
                 string newExpression = expression + (child.Operator != null ? child.Operator.ToString() : child.Value.ToString());
