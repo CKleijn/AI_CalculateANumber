@@ -37,6 +37,7 @@ Console.WriteLine($"Error percentage: {amountOfErrorsStatic / amountOfExecutions
 Console.WriteLine("-------------------------------------------------------------");
 
 int amountOfLoopsDynamic = 2;
+int amountOfNumbersDynamic = 4;
 int amountOfExecutionsDynamic = 0;
 int amountOfErrorsDynamic = 0;
 
@@ -44,7 +45,7 @@ while (amountOfLoopsDynamic > 0)
 {
     try
     {
-        List<int> numbersDynamic = BaseStep.GenerateNumbers(6, 100);
+        List<int> numbersDynamic = BaseStep.GenerateNumbers(amountOfNumbersDynamic, 100);
         long targetDynamic = BaseStep.GenerateTarget(numbersDynamic);
 
         // Step one (DFS - Right) - Dynamic
@@ -62,6 +63,7 @@ while (amountOfLoopsDynamic > 0)
     }
     finally
     {
+        amountOfNumbersDynamic++;
         amountOfExecutionsDynamic += 3;
         amountOfLoopsDynamic--;
     }
