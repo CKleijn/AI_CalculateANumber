@@ -3,31 +3,75 @@ using System.Data;
 using System.Diagnostics;
 using System.Text;
 
+int amountOfLoopsStatic = 2;
+int amountOfExecutionsStatic = 0;
+int amountOfErrorsStatic = 0;
+
 List<int> numbersStatic = [6, 10, 25, 75, 5, 50];
 int targetStatic = 741;
 
-// Step one (DFS - Right) - Static
-SetupAndRun(new StepOne(), numbersStatic, targetStatic);
+while (amountOfLoopsStatic > 0)
+{
+    try
+    {
+        // Step one (DFS - Right) - Static
+        SetupAndRun(new StepOne(), numbersStatic, targetStatic);
 
-// Step two (DFS - Left) - Static
-SetupAndRun(new StepTwo(), numbersStatic, targetStatic);
+        // Step two (DFS - Left) - Static
+        SetupAndRun(new StepTwo(), numbersStatic, targetStatic);
 
-// Step three (Greedy) - Static
-SetupAndRun(new StepThree(), numbersStatic, targetStatic);
+        // Step three (Greedy) - Static
+        SetupAndRun(new StepThree(), numbersStatic, targetStatic);
+    }
+    catch (Exception)
+    {
+        amountOfErrorsStatic++;
+    }
+    finally
+    {
+        amountOfExecutionsStatic += 3;
+        amountOfLoopsStatic--;
+    }
+}
 
-Console.WriteLine("-------------------------------------");
+Console.WriteLine($"Error percentage: {amountOfErrorsStatic / amountOfExecutionsStatic * 100}%");
 
-List<int> numbersDynamic = BaseStep.GenerateNumbers(6, 100);
-long targetDynamic = BaseStep.GenerateTarget(numbersDynamic);
+Console.WriteLine("-------------------------------------------------------------");
 
-// Step one (DFS - Right) - Dynamic
-SetupAndRun(new StepOne(), numbersDynamic, targetDynamic);
+int amountOfLoopsDynamic = 2;
+int amountOfNumbersDynamic = 3;
+int amountOfExecutionsDynamic = 0;
+int amountOfErrorsDynamic = 0;
 
-// Step two (DFS - Left) - Dynamic
-SetupAndRun(new StepTwo(), numbersDynamic, targetDynamic);
+while (amountOfLoopsDynamic > 0)
+{
+    try
+    {
+        List<int> numbersDynamic = BaseStep.GenerateNumbers(amountOfNumbersDynamic, 100);
+        long targetDynamic = BaseStep.GenerateTarget(numbersDynamic);
 
-// Step three (Greedy) - Dynamic
-SetupAndRun(new StepThree(), numbersDynamic, targetDynamic);
+        // Step one (DFS - Right) - Dynamic
+        SetupAndRun(new StepOne(), numbersDynamic, targetDynamic);
+
+        // Step two (DFS - Left) - Dynamic
+        SetupAndRun(new StepTwo(), numbersDynamic, targetDynamic);
+
+        // Step three (Greedy) - Dynamic
+        SetupAndRun(new StepThree(), numbersDynamic, targetDynamic);
+    }
+    catch (Exception)
+    {
+        amountOfErrorsDynamic++;
+    }
+    finally
+    {
+        amountOfNumbersDynamic++;
+        amountOfExecutionsDynamic += 3;
+        amountOfLoopsDynamic--;
+    }
+}
+
+Console.WriteLine($"Error percentage: {amountOfErrorsDynamic / amountOfExecutionsDynamic * 100}%");
 
 static void SetupAndRun(BaseStep step, List<int> numbers, long target)
 {
