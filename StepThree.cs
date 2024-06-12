@@ -10,6 +10,7 @@ namespace CalculateANumber
         /// </summary>
         /// <param name="node"></param>
         /// <param name="target"></param>
+        /// <param name="nodesVisited"></param>
         /// <param name="expression"></param>
         /// <returns>bool</returns>
         public override bool RunSearchAlgorithm(Node node, long target, ref int nodesVisited, string expression = "")
