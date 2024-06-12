@@ -2,6 +2,7 @@
 using CalculateANumber.Structures;
 using System.Data;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CalculateANumber
 {
@@ -42,7 +43,11 @@ namespace CalculateANumber
         /// </summary>
         /// <param name="numbers"></param>
         /// <returns>long</returns>
-        public static long GenerateTarget(List<int> numbers) => Convert.ToInt64(RunExpression(BuildExpression(numbers)));
+        public static long GenerateTarget(List<int> numbers)
+        {
+            long target = Convert.ToInt64(RunExpression(BuildExpression(numbers)));
+            return (target >= 100 && target <= 999) ? target : GenerateTarget(numbers);
+        }
 
         /// <summary>
         /// Generate tree based on given numbers where a search algorithm can be runned on
