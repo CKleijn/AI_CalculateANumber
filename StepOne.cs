@@ -23,7 +23,7 @@ namespace CalculateANumber
             if (node.Children.Count == 0)
             {
                 // Check if expression from leaf is target
-                if (target == RunExpression(expression))
+                if (target == RunExpression(expression) && IsValidCalculation(expression))
                 {
                     // Target found with DFS, print expression solution
                     Console.WriteLine($"Expression: {expression}={target}");

@@ -1,8 +1,10 @@
 ﻿using CalculateANumber;
+using System.Data;
 using System.Diagnostics;
+using System.Text;
 
 List<int> numbersStatic = [6, 10, 25, 75, 5, 50];
-int targetStatic = 728;
+int targetStatic = 741;
 
 // Step one (DFS - Right) - Static
 SetupAndRun(new StepOne(), numbersStatic, targetStatic);
@@ -39,3 +41,4 @@ static void SetupAndRun(BaseStep step, List<int> numbers, long target)
     Console.WriteLine($"({step.GetType()}) Time taken: {stopwatch.ElapsedMilliseconds} ms");
     Console.WriteLine();
 }
+
