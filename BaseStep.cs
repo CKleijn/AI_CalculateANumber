@@ -39,7 +39,7 @@ namespace CalculateANumber
         }
 
         /// <summary>
-        /// Generate target based on given numbers and return long version of it
+        /// Generate target between 100 and 999 based on given numbers and return long version of it
         /// </summary>
         /// <param name="numbers"></param>
         /// <returns>long</returns>

@@ -37,7 +37,7 @@ Console.WriteLine($"Error percentage: {amountOfErrorsStatic / amountOfExecutions
 Console.WriteLine("-------------------------------------------------------------");
 
 int amountOfLoopsDynamic = 2;
-int amountOfNumbersDynamic = 3;
+int amountOfNumbersDynamic = 5;
 int amountOfExecutionsDynamic = 0;
 int amountOfErrorsDynamic = 0;
 
