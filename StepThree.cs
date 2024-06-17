@@ -24,7 +24,7 @@ namespace CalculateANumber
             // Check if GS reached bottom of leaf
             if (node.Children.Count == 0)
             {
-                // Check if expression from leaf is target
+                // Check if expression from leaf is target and is a valid calculation
                 if (target == RunExpression(expression) && IsValidCalculation(expression))
                 {
                     // Target found with GS, print expression solution

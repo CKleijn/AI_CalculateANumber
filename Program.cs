@@ -1,14 +1,12 @@
 ﻿using CalculateANumber;
-using System.Data;
 using System.Diagnostics;
-using System.Text;
 
 int amountOfLoopsStatic = 2;
 int amountOfExecutionsStatic = 0;
 int amountOfErrorsStatic = 0;
 
 List<int> numbersStatic = [6, 10, 25, 75, 5, 50];
-int targetStatic = 741;
+int targetStatic = 728;
 
 while (amountOfLoopsStatic > 0)
 {
@@ -39,7 +37,7 @@ Console.WriteLine($"Error percentage: {amountOfErrorsStatic / amountOfExecutions
 Console.WriteLine("-------------------------------------------------------------");
 
 int amountOfLoopsDynamic = 2;
-int amountOfNumbersDynamic = 3;
+int amountOfNumbersDynamic = 5;
 int amountOfExecutionsDynamic = 0;
 int amountOfErrorsDynamic = 0;
 
@@ -80,8 +78,9 @@ static void SetupAndRun(BaseStep step, List<int> numbers, long target)
     var tree = step.GenerateTree(numbers);
     var stopwatch = Stopwatch.StartNew();
     var nodesVisited = 0;
-    step.RunSearchAlgorithm(tree.Root, target, ref nodesVisited);
+    var run = step.RunSearchAlgorithm(tree.Root, target, ref nodesVisited);
     stopwatch.Stop();
+    if (!run) Console.WriteLine($"{target} has not been found with the given numbers. Please make sure the target is reachable with the given numbers.");
     Console.WriteLine($"({step.GetType()}) Time taken: {stopwatch.ElapsedMilliseconds} ms");
     Console.WriteLine();
 }

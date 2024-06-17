@@ -1,9 +1,7 @@
 ﻿using CalculateANumber.Enums;
 using CalculateANumber.Structures;
 using System.Data;
-using System.Linq.Expressions;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CalculateANumber
 {
@@ -44,7 +42,6 @@ namespace CalculateANumber
         /// </summary>
         /// <param name="numbers"></param>
         /// <returns>long</returns>
-
         public static long GenerateTarget(List<int> numbers)
         {
             long target = Convert.ToInt64(RunExpression(BuildExpression(numbers)));
@@ -140,35 +137,39 @@ namespace CalculateANumber
             int[] shuffledNumbers = numbers.OrderBy(n => rnd.Next()).ToArray();
             char[] operators = { '+', '-', '*', '/' };
 
-            StringBuilder expression = new();
-            expression.Append(shuffledNumbers[0]);
+            // Add first number to start the expression
+            StringBuilder expression = new(shuffledNumbers[0].ToString());
 
             // Loop through shuffledNumbers and append to expression
             for (int i = 1; i < shuffledNumbers.Length; i++)
             {
-                bool valid = false;
-
-                while (!valid)
+                // Indicate if part of expression is valid (no decimal)
+                bool partOfExpressionIsValid = false;
+                // Loop until part of expression is valid
+                while (!partOfExpressionIsValid)
                 {
-                    StringBuilder calculation = new StringBuilder();
-                    calculation.Append(expression.ToString());
+                    // Create temp calculation to check if it's valid before assigning to expression
+                    StringBuilder tempCalculation = new(expression.ToString());
 
-                    char op = operators[rnd.Next(operators.Length)];
                     int nextNumber = shuffledNumbers[i];
+                    char op = operators[rnd.Next(operators.Length)];
 
-                    // Check for division by zero
-                    if (op == '/' && nextNumber == 0)
-                    {
-                        continue;
-                    }
+                    // If division by zero > continue
+                    if (op == '/' && nextNumber == 0) continue;
 
-                    calculation.Append(op).Append(nextNumber);
+                    // Append valid operator and number to tempCalculation
+                    tempCalculation
+                        .Append(op)
+                        .Append(nextNumber);
 
                     // Check if the calculation has no decimal result
-                    if (IsValidCalculation(calculation.ToString()))
+                    if (IsValidCalculation(tempCalculation.ToString()))
                     {
-                        expression.Append(op).Append(nextNumber);
-                        valid = true;
+                        expression
+                            .Append(op)
+                            .Append(nextNumber);
+
+                        partOfExpressionIsValid = true;
                     }
                 }
             }
@@ -183,9 +184,9 @@ namespace CalculateANumber
         /// <returns>bool</returns>
         protected static bool IsValidCalculation(string calculation)
         {
-            DataTable dt = new DataTable();
-            double result = Convert.ToDouble(dt.Compute(calculation, null));
-            return Math.Abs(result % 1) < double.Epsilon * 100; // Check if result is close to an integer
+            double result = Convert.ToDouble(new DataTable().Compute(calculation, null));
+            // Check if result is a whole integer
+            return Math.Abs(result % 1) < double.Epsilon * 100;
         }
 
         /// <summary>
