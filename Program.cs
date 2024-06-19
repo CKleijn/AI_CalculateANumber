@@ -1,7 +1,7 @@
 ﻿using CalculateANumber;
 using System.Diagnostics;
 
-int amountOfLoopsStatic = 2;
+int amountOfLoopsStatic = 3;
 int amountOfExecutionsStatic = 0;
 int amountOfErrorsStatic = 0;
 
@@ -36,7 +36,7 @@ Console.WriteLine($"Error percentage: {amountOfErrorsStatic / amountOfExecutions
 
 Console.WriteLine("-------------------------------------------------------------");
 
-int amountOfLoopsDynamic = 50;
+int amountOfLoopsDynamic = 3;
 int amountOfNumbersDynamic = 6;
 int amountOfExecutionsDynamic = 0;
 int amountOfErrorsDynamic = 0;
@@ -50,6 +50,7 @@ while (amountOfLoopsDynamic > 0)
 
         // Step one (DFS - Right) - Dynamic
         SetupAndRun(new StepOne(), numbersDynamic, targetDynamic);
+
         // Step two (DFS - Left) - Dynamic
         SetupAndRun(new StepTwo(), numbersDynamic, targetDynamic);
 
@@ -63,7 +64,6 @@ while (amountOfLoopsDynamic > 0)
     }
     finally
     {
-        /*amountOfNumbersDynamic++;*/
         amountOfExecutionsDynamic += 3;
         amountOfLoopsDynamic--;
     }
@@ -73,13 +73,15 @@ Console.WriteLine($"Error percentage: {amountOfErrorsDynamic / amountOfExecution
 
 static void SetupAndRun(BaseStep step, List<int> numbers, long target)
 {
-    var tree = step.GenerateTree(numbers);
-    var stopwatch = Stopwatch.StartNew();
     var nodesVisited = 0;
+    var tree = step.GenerateTree(numbers);
+
+    var stopwatch = Stopwatch.StartNew();
     var run = step.RunSearchAlgorithm(tree.Root, target, ref nodesVisited);
+    stopwatch.Stop();
+
     Console.WriteLine($"Numbers: {string.Join(", ", numbers)}");
     Console.WriteLine($"Target: {target}");
-    stopwatch.Stop();
     if (!run) Console.WriteLine($"{target} has not been found with the given numbers. Please make sure the target is reachable with the given numbers.");
     Console.WriteLine($"({step.GetType()}) Time taken: {stopwatch.ElapsedMilliseconds} ms");
     Console.WriteLine();
