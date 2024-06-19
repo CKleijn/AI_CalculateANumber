@@ -6,7 +6,7 @@ int amountOfExecutionsStatic = 0;
 int amountOfErrorsStatic = 0;
 
 List<int> numbersStatic = [6, 10, 25, 75, 5, 50];
-int targetStatic = 7;
+int targetStatic = 741;
 
 while (amountOfLoopsStatic > 0)
 {
