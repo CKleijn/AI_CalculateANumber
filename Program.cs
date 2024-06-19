@@ -6,7 +6,7 @@ int amountOfExecutionsStatic = 0;
 int amountOfErrorsStatic = 0;
 
 List<int> numbersStatic = [6, 10, 25, 75, 5, 50];
-int targetStatic = 741;
+int targetStatic = 7;
 
 while (amountOfLoopsStatic > 0)
 {
@@ -36,8 +36,8 @@ Console.WriteLine($"Error percentage: {amountOfErrorsStatic / amountOfExecutions
 
 Console.WriteLine("-------------------------------------------------------------");
 
-int amountOfLoopsDynamic = 2;
-int amountOfNumbersDynamic = 5;
+int amountOfLoopsDynamic = 50;
+int amountOfNumbersDynamic = 6;
 int amountOfExecutionsDynamic = 0;
 int amountOfErrorsDynamic = 0;
 
@@ -50,12 +50,12 @@ while (amountOfLoopsDynamic > 0)
 
         // Step one (DFS - Right) - Dynamic
         SetupAndRun(new StepOne(), numbersDynamic, targetDynamic);
-
         // Step two (DFS - Left) - Dynamic
         SetupAndRun(new StepTwo(), numbersDynamic, targetDynamic);
 
         // Step three (Greedy) - Dynamic
         SetupAndRun(new StepThree(), numbersDynamic, targetDynamic);
+
     }
     catch (Exception)
     {
@@ -63,7 +63,7 @@ while (amountOfLoopsDynamic > 0)
     }
     finally
     {
-        amountOfNumbersDynamic++;
+        /*amountOfNumbersDynamic++;*/
         amountOfExecutionsDynamic += 3;
         amountOfLoopsDynamic--;
     }
@@ -73,12 +73,12 @@ Console.WriteLine($"Error percentage: {amountOfErrorsDynamic / amountOfExecution
 
 static void SetupAndRun(BaseStep step, List<int> numbers, long target)
 {
-    Console.WriteLine($"Numbers: {string.Join(", ", numbers)}");
-    Console.WriteLine($"Target: {target}");
     var tree = step.GenerateTree(numbers);
     var stopwatch = Stopwatch.StartNew();
     var nodesVisited = 0;
     var run = step.RunSearchAlgorithm(tree.Root, target, ref nodesVisited);
+    Console.WriteLine($"Numbers: {string.Join(", ", numbers)}");
+    Console.WriteLine($"Target: {target}");
     stopwatch.Stop();
     if (!run) Console.WriteLine($"{target} has not been found with the given numbers. Please make sure the target is reachable with the given numbers.");
     Console.WriteLine($"({step.GetType()}) Time taken: {stopwatch.ElapsedMilliseconds} ms");
